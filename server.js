@@ -1,6 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,13 +16,13 @@ app.post('/send-email', async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'veerychetty123@gmail.com',
-        pass: 'tkjn glof hgrf femv',
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
     const mailOptions = {
-      from: 'veerychetty123@gmail.com',
+      from: process.env.EMAIL_USER,
       to: 'kalaikumarwriter@gmail.com',
       subject: 'New Contact Form Submission',
       text: `
