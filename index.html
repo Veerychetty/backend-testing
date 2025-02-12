@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+</head>
+<body>
+    <form id="contactForm" action="http://localhost:3000/send-email" method="POST">
+        <h3 class="title">Contact us</h3>
+        <div class="input-container">
+            <input type="text" name="name" class="input" placeholder="Name" required>
+        </div>
+        <div class="input-container">
+            <input type="email" name="email" class="input" placeholder="Email" required>
+        </div>
+        <div class="input-container">
+            <input type="tel" name="phone" class="input" placeholder="Phone" required>
+        </div>
+        <div class="input-container">
+            <input type="text" name="address" class="input" placeholder="Address" required>
+        </div>
+        <div class="input-container">
+            <div class="split-screen">
+                <div class="left">
+                    <section class="copy">
+                        <h1>Services:</h1>
+                        <input type="checkbox" name="services[]" value="Phone Consultation" class="input"/>Phone Consultation
+                        <input type="checkbox" name="services[]" value="Full Service Design" class="input"/>Full Service Design
+                        <input type="checkbox" name="services[]" value="New Construction" class="input"/>New Construction
+                        <input type="checkbox" name="services[]" value="Remodel" class="input"/>Remodel
+                        <input type="checkbox" name="services[]" value="E-design" class="input"/>E-design
+                    </section>
+                </div>
+                <div class="right">
+                    <section class="copy">
+                        <h1>Project Budget:</h1>
+                        <input type="checkbox" name="budget[]" value="20k-30k" class="input"/>20k-30k
+                        <input type="checkbox" name="budget[]" value="30k-50k" class="input"/>30k-50k
+                        <input type="checkbox" name="budget[]" value="50k-100k" class="input"/>50k-100k
+                        <input type="checkbox" name="budget[]" value="100k-200k" class="input"/>100k-200k
+                        <input type="checkbox" name="budget[]" value="200k+" class="input"/>200k+
+                    </section>
+                </div>
+            </div>
+        </div>
+        <div class="input-container textarea">
+            <textarea name="message" class="input" placeholder="Your Goals"></textarea>
+        </div>
+        <input type="submit" value="Send" class="btn">
+    </form>
+    <script>
+        const cors = require('cors');
+        app.use(cors());
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const formObject = {};
+            
+            formData.forEach((value, key) => {
+                if (formObject[key]) {
+                    if (!Array.isArray(formObject[key])) {
+                        formObject[key] = [formObject[key]];
+                    }
+                    formObject[key].push(value);
+                } else {
+                    formObject[key] = value;
+                }
+            });
+
+            console.log('Form Data:', formObject); // Debugging
+        
+            fetch('/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formObject)
+            })
+            .then(response => response.text())
+            .then(data => alert('Email sent successfully'))
+            .catch(error => alert('Error sending email'));
+        });
+        const express = require('express');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.post('/send-email', async (req, res) => {
+  const { name, email, phone, address, services, budget, message } = req.body;
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'veerychetty123@gmail.com',
+        pass: 'tkjn glof hgrf femv',
+      },
+    });
+
+    const mailOptions = {
+      from: 'veerychetty123@gmail.com',
+      to: 'kalaikumarwriter@gmail.com',
+      subject: 'New Contact Form Submission',
+      text: `
+        Name: ${name}
+        Email: ${email}
+        Phone: ${phone}
+        Address: ${address}
+        Services: ${Array.isArray(services) ? services.join(', ') : services}
+        Budget: ${Array.isArray(budget) ? budget.join(', ') : budget}
+        Message: ${message}
+      `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log('Email sent:', info.response);
+    res.status(200).send('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).send('Error sending email');
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+    </script>
+</body>
+</html>
